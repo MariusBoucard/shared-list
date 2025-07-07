@@ -14,7 +14,7 @@
         <div class="item-list">
           <ItemDetails
             v-for="item in items"
-            :key="item.id"
+            :key="item.id || index"
             :item="item"
             @delete="deleteItem"
             @update="updateItem"  
@@ -43,6 +43,7 @@ export default {
       password: 'yolo_du_79',
       token: '',
       items: [],
+      nextId: 69 // To generate unique IDs for new items
     }
   },
   methods: {
@@ -84,6 +85,7 @@ export default {
       })
       .then(response => {
         console.log('Item added:', response.data);
+        newItem.id = response.data.id; // Update the new item with the ID from the server
       })
     },
     async getList() {
@@ -121,7 +123,14 @@ export default {
       })
     },
     deleteItem(itemId) {
+      if (!itemId || isNaN(itemId)) {
+    console.error('Invalid itemId:', itemId);
+    return;
+  }
+
+      console.log('Deleting item with ID:', itemId);
       this.items = this.items.filter(item => item.id !== itemId)
+      console.log(itemId)
       axiosInstance.delete(`/api/items/${itemId}`, {
         headers: {
           Authorization: this.token,
@@ -130,6 +139,7 @@ export default {
       .then(response => {
         console.log('Item deleted:', response.data);
       })
+
     }
   }
 }

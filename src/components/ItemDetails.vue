@@ -28,7 +28,7 @@
         </div>
       
         </div>
-        
+
       <div class="comments-section">
         <h3>Avis</h3>
         <ul>
@@ -50,8 +50,11 @@
   import { ref, defineProps, defineEmits } from 'vue'
   
   const props = defineProps({
-    item: Object
-  })
+  item: {
+    type: Object,
+    required: true
+  }
+})
   
   // Define all the events this component can emit
   const emit = defineEmits(['delete', 'update'])
