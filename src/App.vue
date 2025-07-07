@@ -24,51 +24,88 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue'
+<script>
+import axiosInstance from './axios.js' // Import the configured Axios instance
 import Login from './components/LoginComponent.vue'
 import AddItemForm from './components/AddItemForm.vue'
 import ItemDetails from './components/ItemDetails.vue'
 
-const loggedIn = ref(false)
-const items = ref([])
-let nextId = 1
-
-const handleLogin = () => {
-  loggedIn.value = true
-}
-
-const logout = () => {
-  loggedIn.value = false
-}
-
-const addNewItem = () => {
-  const newItem = {
-    id: nextId++,
-    title: 'New Item',
-    link: 'https://example.com',
-    address: '123 Main St',
-    size: 'Medium',
-    description: 'A default description.',
-    comments: []
+export default {
+  components: {
+    Login,
+    AddItemForm,
+    ItemDetails
+  },
+  data() {
+    return {
+      loggedIn: false,
+      username: '',
+      password: '',
+      token: '',
+      items: [],
+    }
+  },
+  methods: {
+    async handleLogin() {
+      try {
+        const response = await axiosInstance.post('/api/login', {
+          username: this.username,
+          password: this.password,
+        });
+        this.token = response.data.token;
+        this.loggedIn = true;
+        console.log('Login successful:', response.data);
+      } catch (error) {
+        console.error('Login failed:', error.response?.data || error.message);
+      }
+    },
+    logout() {
+      this.loggedIn = false;
+      this.token = '';
+      this.items = [];
+    },
+    addNewItem() {
+      const newItem = {
+        id: this.nextId++,
+        title: 'New Item',
+        link: 'https://example.com',
+        address: '123 Main St',
+        size: 'Medium',
+        description: 'A default description.',
+        comments: []
+      }
+      this.items.push(newItem)
+    },
+    async getList() {
+      if (!this.token) {
+        console.error('No token available. Please log in first.');
+        return;
+      }
+      try {
+        const response = await axiosInstance.get('/api/items', {
+          headers: {
+            Authorization: this.token,
+          },
+        });
+        this.items = response.data;
+        console.log('Items fetched:', this.items);
+      } catch (error) {
+        console.error('Failed to fetch items:', error.response?.data || error.message);
+      }
+     
+    },
+    updateItem(payload) {
+      const itemToUpdate = this.items.find(item => item.id === payload.id)
+      if (itemToUpdate) {
+        this.$set(itemToUpdate, payload.field, payload.value)
+      }
+    },
+    deleteItem(itemId) {
+      this.items = this.items.filter(item => item.id !== itemId)
+    }
   }
-  items.value.push(newItem)
-}
-
-// Handler for the 'update' event from the child
-const updateItem = (payload) => {
-  const itemToUpdate = items.value.find(item => item.id === payload.id)
-  if (itemToUpdate) {
-    itemToUpdate[payload.field] = payload.value
-  }
-}
-
-const deleteItem = (itemId) => {
-  items.value = items.value.filter(item => item.id !== itemId)
 }
 </script>
-
 <style>
 /* Your global styles remain the same */
 body {

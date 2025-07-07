@@ -1,16 +1,16 @@
 <template>
     <div class="login-container">
-      <h2>Login</h2>
+      <h2>Connection</h2>
       <form @submit.prevent="login">
         <div>
-          <label for="username">Username:</label>
+          <label for="username">nom :</label>
           <input type="text" id="username" v-model="username" required>
         </div>
         <div>
-          <label for="password">Password:</label>
+          <label for="password">Mdp :</label>
           <input type="password" id="password" v-model="password" required>
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Connecter</button>
       </form>
     </div>
   </template>
@@ -40,5 +40,4 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
-  /* Add specific styles for the login form */
   </style>

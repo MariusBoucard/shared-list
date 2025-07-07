@@ -1,6 +1,6 @@
 <template>
     <div>
-      <button @click="addItem" class="add-item-button">Add New Item</button>
+      <button @click="addItem" class="add-item-button">Ajouter un appart</button>
     </div>
   </template>
   
