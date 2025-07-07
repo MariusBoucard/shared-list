@@ -2,36 +2,42 @@
     <div class="item-card">
       <div class="item-fields">
         <div class="field">
-          <label>Title:</label>
+          <label>Nom :</label>
           <input :value="item.title" @input="emitUpdate('title', $event.target.value)">
         </div>
         <div class="field">
-          <label>Link:</label>
+          <label>Lien :</label>
           <input :value="item.link" @input="emitUpdate('link', $event.target.value)">
         </div>
         <div class="field">
-          <label>Address:</label>
+          <label>Addresse :</label>
           <input :value="item.address" @input="emitUpdate('address', $event.target.value)">
         </div>
         <div class="field">
-          <label>Size:</label>
+          <label>Taille :</label>
           <input :value="item.size" @input="emitUpdate('size', $event.target.value)">
         </div>
         <div class="field">
-          <label>Description:</label>
+          <label>Description :</label>
           <textarea :value="item.description" @input="emitUpdate('description', $event.target.value)"></textarea>
         </div>
-      </div>
-  
+        <div class="field">
+          <label>Note :</label>
+          <input type="number" :value="item.note" @input="emitUpdate('note', $event.target.value)" min="0" max="5">
+
+        </div>
+      
+        </div>
+        
       <div class="comments-section">
-        <h3>Comments</h3>
+        <h3>Avis</h3>
         <ul>
           <li v-for="(comment, index) in item.comments" :key="index">
             {{ comment }}
           </li>
         </ul>
         <div class="add-comment">
-          <input v-model="newComment" @keyup.enter="addComment" placeholder="Add a comment...">
+          <input v-model="newComment" @keyup.enter="addComment" placeholder="Un commentaire ?">
           <button @click="addComment">+</button>
         </div>
       </div>

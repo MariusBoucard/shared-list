@@ -6,8 +6,8 @@
     <div v-else>
       <div class="container">
         <header>
-          <h1>My Item List</h1>
-          <button @click="logout" class="logout-button">Logout</button>
+          <h1>Appartements pour avec ma jadou</h1>
+          <button @click="logout" class="logout-button">Déco</button>
         </header>
         <AddItemForm @addItem="addNewItem" />
         <hr>
@@ -39,8 +39,8 @@ export default {
   data() {
     return {
       loggedIn: false,
-      username: '',
-      password: '',
+      username: 'chikita',
+      password: 'yolo_du_79',
       token: '',
       items: [],
     }
@@ -54,6 +54,7 @@ export default {
         });
         this.token = response.data.token;
         this.loggedIn = true;
+        this.getList(); // Fetch the item list after successful login
         console.log('Login successful:', response.data);
       } catch (error) {
         console.error('Login failed:', error.response?.data || error.message);
@@ -67,16 +68,26 @@ export default {
     addNewItem() {
       const newItem = {
         id: this.nextId++,
-        title: 'New Item',
-        link: 'https://example.com',
-        address: '123 Main St',
-        size: 'Medium',
-        description: 'A default description.',
+        title: 'Appart '+ (this.items.length + 1),
+        link: '',
+        address: 'xx',
+        size: 'xx',
+        description: '',
+        note : 0,
         comments: []
       }
       this.items.push(newItem)
+      axiosInstance.post('/api/items', newItem, {
+        headers: {
+          Authorization: this.token,
+        },
+      })
+      .then(response => {
+        console.log('Item added:', response.data);
+      })
     },
     async getList() {
+      console.log('Fetching items...');
       if (!this.token) {
         console.error('No token available. Please log in first.');
         return;
@@ -92,16 +103,33 @@ export default {
       } catch (error) {
         console.error('Failed to fetch items:', error.response?.data || error.message);
       }
-     
     },
     updateItem(payload) {
       const itemToUpdate = this.items.find(item => item.id === payload.id)
       if (itemToUpdate) {
-        this.$set(itemToUpdate, payload.field, payload.value)
+        itemToUpdate[payload.field] = payload.value
+      //  this.$set(itemToUpdate, payload.field, payload.value)
       }
+
+      console.log('Updating item:', payload);
+      axiosInstance.put(`/api/items/${payload.id}`, {
+        [payload.field]: payload.value
+      }, {
+        headers: {
+          Authorization: this.token,
+        },
+      })
     },
     deleteItem(itemId) {
       this.items = this.items.filter(item => item.id !== itemId)
+      axiosInstance.delete(`/api/items/${itemId}`, {
+        headers: {
+          Authorization: this.token,
+        },
+      })
+      .then(response => {
+        console.log('Item deleted:', response.data);
+      })
     }
   }
 }
